@@ -1,11 +1,15 @@
 "use client";
 import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 
-const geoUrl = "/maps/indoProvince.json";
+const geoUrl = "/maps/gadm41_IDN_2_Topo.json";
 
 export default function IndonesiaMap() {
   return (
-    <ComposableMap projection="geoMercator">
+    <ComposableMap projection="geoMercator" 
+    projectionConfig={{
+    center: [118, -5],
+    scale: 950,
+  }}>
       <Geographies geography={geoUrl}>
         {({ geographies }) =>
           geographies.map((geo) => (
