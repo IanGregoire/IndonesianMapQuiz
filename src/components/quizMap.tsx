@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react'
 export default function QuizMap() {
   const params = useParams();
   const island = params.island; 
-//   const island = useQuizStore((state) => state.island)
+  
   const setProvinces = useQuizStore((state) => state.setProvinces)
   const setTargetProvince = useQuizStore((state) => state.setTargetProvince)
   const targetProvince = useQuizStore((state) => state.targetProvince)
@@ -86,17 +86,32 @@ export default function QuizMap() {
                         geography={geo}
                         onClick={() => handleClick(geo)}
                         style={{
+                        // default: {
+                        //     fill: '#444',
+                        //     outline: 'none',
+                        // },
+                        // hover: {
+                        //     fill: '#F53',
+                        //     outline: 'none',
+                        // },
+                        // pressed: {
+                        //     fill: '#E42',
+                        //     outline: 'none',
+                        // },
                         default: {
-                            fill: '#D6D6DA',
-                            outline: 'none',
+                            fill: "#E0E0E0",
+                            stroke: "#607D8B",
+                            strokeWidth: 0.75,
                         },
                         hover: {
-                            fill: '#F53',
-                            outline: 'none',
+                            fill: "#FF5722",
+                            stroke: "#607D8B",
+                            strokeWidth: 0.75,
                         },
                         pressed: {
-                            fill: '#E42',
-                            outline: 'none',
+                            fill: "#FF5722",
+                            stroke: "#607D8B",
+                            strokeWidth: 0.75,
                         },
                         }}
                     />
