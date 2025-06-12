@@ -9,7 +9,7 @@ export default function QuizControls() {
   const total = useQuizStore((state) => state.total)
 
   const finishQuiz = () => {
-    router.push('/result')
+    router.push('/results')
   }
 
   return (
