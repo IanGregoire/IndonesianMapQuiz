@@ -10,8 +10,11 @@ export default function QuizMap() {
   const island = params.island; 
   
   const setProvinces = useQuizStore((state) => state.setProvinces)
+  const setKabupaten = useQuizStore((state) => state.setKabupaten)
   const setTargetProvince = useQuizStore((state) => state.setTargetProvince)
+  const setTargetKabupaten = useQuizStore((state) => state.setTargetKabupaten)
   const targetProvince = useQuizStore((state) => state.targetProvince)
+  const targetKabupaten = useQuizStore((state) => state.targetKabupaten)
   const incrementScore = useQuizStore((state) => state.incrementScore)
   const incrementTotal = useQuizStore((state) => state.incrementTotal)
 
@@ -26,33 +29,43 @@ export default function QuizMap() {
       .then((res) => res.json())
       .then((data) => {
         const features = data.objects[Object.keys(data.objects)[0]].geometries
-        const provinceNames = features.map((f: any) => f.properties.NAME_1)
-        setProvinces(provinceNames)
+        const kabupatenNames = features.map((f: any) => f.properties.NAME_2)
+        // const provinceNames = features.map((f: any) => f.properties.NAME_1)
+        setKabupaten(kabupatenNames)
+        // setProvinces(provinceNames)
 
         // Pick random target province
-        const randomProvince = provinceNames[Math.floor(Math.random() * provinceNames.length)]
-        setTargetProvince(randomProvince)
+        const randomKabupaten = kabupatenNames[Math.floor(Math.random() * kabupatenNames.length)]
+        // const randomProvince = provinceNames[Math.floor(Math.random() * provinceNames.length)]
+        setTargetKabupaten(randomKabupaten)
+        // setTargetProvince(randomProvince)
 
         setGeographies(features)
       })
 
-  }, [island, setProvinces, setTargetProvince])
+  }, [island, setProvinces, setKabupaten, setTargetProvince])
 
   const handleClick = (geo: any) => {
-    const clickedName = geo.properties.NAME_1
+    const clickedName = geo.properties.NAME_2
+    // const clickedName = geo.properties.NAME_1
     incrementTotal()
 
-    if (clickedName === targetProvince) {
+    // if (clickedName === targetProvince) {
+    if (clickedName === targetKabupaten) {
       incrementScore()
       alert(`✅ Correct! ${clickedName}`)
     } else {
-      alert(`❌ Wrong! You clicked ${clickedName}. Target was ${targetProvince}`)
+      alert(`❌ Wrong! You clicked ${clickedName}. Target was ${targetKabupaten}`)
+    //   alert(`❌ Wrong! You clicked ${clickedName}. Target was ${targetProvince}`)
     }
 
     // Pick next target
-    const provinces = useQuizStore.getState().provinces
-    const nextTarget = provinces[Math.floor(Math.random() * provinces.length)]
-    setTargetProvince(nextTarget)
+    const kabupaten = useQuizStore.getState().kabupaten
+    const nextTarget = kabupaten[Math.floor(Math.random() * kabupaten.length)]
+    setTargetKabupaten(nextTarget)
+    // const provinces = useQuizStore.getState().provinces
+    // const nextTarget = provinces[Math.floor(Math.random() * provinces.length)]
+    // setTargetProvince(nextTarget)
   }
 
   if (!island) return <p className="text-center mt-4">Select an island first.</p>
@@ -71,13 +84,14 @@ export default function QuizMap() {
 
   return (
     <div className="flex flex-col items-center mt-6">
-      <p className="text-lg mb-2">Click on: <strong>{targetProvince}</strong></p>
+      {/* <p className="text-lg mb-2">Click on: <strong>{targetProvince}</strong></p> */}
+      <p className="text-lg mb-2">Click on: <strong>{targetKabupaten}</strong></p>
         <ComposableMap projection="geoMercator"
             projectionConfig={{
                 center: [islandProjectionConfig[islandIndex].centerX, islandProjectionConfig[islandIndex].centerY], 
                 scale: islandProjectionConfig[islandIndex].scale,
             }}>
-          <ZoomableGroup>
+          <ZoomableGroup translateExtent={[[-1000, -1000], [1000, 1000]]}>
             <Geographies geography={`/maps/${island}.json`}>
                 {({ geographies }) =>
                     geographies.map((geo) => (
