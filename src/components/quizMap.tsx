@@ -1,5 +1,6 @@
 'use client'
 
+import QuizControls from 'components/quizControls'
 import { useParams } from 'next/navigation';
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from 'react-simple-maps'
 import { useQuizStore } from 'store/useQuizStore'
@@ -9,20 +10,17 @@ export default function QuizMap() {
   const params = useParams();
   const island = params.island; 
   
-  const setProvinces = useQuizStore((state) => state.setProvinces)
   const setKabupaten = useQuizStore((state) => state.setKabupaten)
-  const setTargetProvince = useQuizStore((state) => state.setTargetProvince)
   const setTargetKabupaten = useQuizStore((state) => state.setTargetKabupaten)
-  const targetProvince = useQuizStore((state) => state.targetProvince)
-  const targetKabupaten = useQuizStore((state) => state.targetKabupaten)
+  const targetKabupaten = useQuizStore((state) => state.targetKabupaten) 
   const incrementScore = useQuizStore((state) => state.incrementScore)
   const incrementTotal = useQuizStore((state) => state.incrementTotal)
 
-  const [geographies, setGeographies] = useState<any[]>([])
+  const [selectedTarget, setSelectedTarget] = useState<String>('')
+  const [correctAnswer, setCorrectAnswer] = useState<Boolean>(false)
 
   useEffect(() => {
     if (!island) return
-    // const url = Sumatra;
     const url = `/maps/${island}.json`
 
     fetch(url)
@@ -30,42 +28,32 @@ export default function QuizMap() {
       .then((data) => {
         const features = data.objects[Object.keys(data.objects)[0]].geometries
         const kabupatenNames = features.map((f: any) => f.properties.NAME_2)
-        // const provinceNames = features.map((f: any) => f.properties.NAME_1)
         setKabupaten(kabupatenNames)
-        // setProvinces(provinceNames)
 
         // Pick random target province
         const randomKabupaten = kabupatenNames[Math.floor(Math.random() * kabupatenNames.length)]
-        // const randomProvince = provinceNames[Math.floor(Math.random() * provinceNames.length)]
         setTargetKabupaten(randomKabupaten)
-        // setTargetProvince(randomProvince)
-
-        setGeographies(features)
       })
 
-  }, [island, setProvinces, setKabupaten, setTargetProvince])
+  }, [island, setKabupaten, setTargetKabupaten])
 
   const handleClick = (geo: any) => {
     const clickedName = geo.properties.NAME_2
-    // const clickedName = geo.properties.NAME_1
+    setSelectedTarget(clickedName);
     incrementTotal()
 
-    // if (clickedName === targetProvince) {
     if (clickedName === targetKabupaten) {
       incrementScore()
-      alert(`✅ Correct! ${clickedName}`)
-    } else {
-      alert(`❌ Wrong! You clicked ${clickedName}. Target was ${targetKabupaten}`)
-    //   alert(`❌ Wrong! You clicked ${clickedName}. Target was ${targetProvince}`)
-    }
 
-    // Pick next target
-    const kabupaten = useQuizStore.getState().kabupaten
-    const nextTarget = kabupaten[Math.floor(Math.random() * kabupaten.length)]
-    setTargetKabupaten(nextTarget)
-    // const provinces = useQuizStore.getState().provinces
-    // const nextTarget = provinces[Math.floor(Math.random() * provinces.length)]
-    // setTargetProvince(nextTarget)
+      // Pick next target 
+      const kabupaten = useQuizStore.getState().kabupaten
+      const nextTarget = kabupaten[Math.floor(Math.random() * kabupaten.length)]
+      setTargetKabupaten(nextTarget)
+      
+      setCorrectAnswer(true);
+    } else {
+      setCorrectAnswer(false);
+    }
   }
 
   if (!island) return <p className="text-center mt-4">Select an island first.</p>
@@ -83,10 +71,13 @@ export default function QuizMap() {
   const islandIndex = islandProjectionConfig.findIndex((name) => name.id == island )
 
   return (
-    <div className="flex flex-col items-center mt-6">
-      {/* <p className="text-lg mb-2">Click on: <strong>{targetProvince}</strong></p> */}
+    <div className="flex flex-col items-center mt-6 h-screen">
       <p className="text-lg mb-2">Click on: <strong>{targetKabupaten}</strong></p>
-        <ComposableMap projection="geoMercator"
+      <p className="text-lg mb-2">Clicked on: <strong>{selectedTarget} which is {correctAnswer ? 'Correct': 'Wrong'}</strong></p> 
+      <QuizControls />  
+        <ComposableMap 
+            className='height-400'
+            projection="geoMercator"
             projectionConfig={{
                 center: [islandProjectionConfig[islandIndex].centerX, islandProjectionConfig[islandIndex].centerY], 
                 scale: islandProjectionConfig[islandIndex].scale,
@@ -99,19 +90,7 @@ export default function QuizMap() {
                         key={geo.rsmKey}
                         geography={geo}
                         onClick={() => handleClick(geo)}
-                        style={{
-                        // default: {
-                        //     fill: '#444',
-                        //     outline: 'none',
-                        // },
-                        // hover: {
-                        //     fill: '#F53',
-                        //     outline: 'none',
-                        // },
-                        // pressed: {
-                        //     fill: '#E42',
-                        //     outline: 'none',
-                        // },
+                        style={{ 
                         default: {
                             fill: "#E0E0E0",
                             stroke: "#607D8B",
