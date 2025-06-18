@@ -2,12 +2,22 @@
 
 import { useRouter } from 'next/navigation'
 import { useQuizStore } from 'store/useQuizStore'
+import { saveQuizResult } from 'utils/localStorage';
 
 export default function ResultSummary() {
   const router = useRouter()
+  const island = useQuizStore((state) => state.island)
   const score = useQuizStore((state) => state.score)
   const total = useQuizStore((state) => state.total)
   const reset = useQuizStore((state) => state.reset)
+
+  const result = {
+    island,
+    correct: score,
+    total,
+  };
+
+  saveQuizResult(result);
 
   const handlePlayAgain = () => {
     reset()

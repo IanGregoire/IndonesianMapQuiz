@@ -10,6 +10,7 @@ export default function QuizMap() {
   const params = useParams();
   const island = params.island; 
   
+  const setIsland = useQuizStore((state) => state.setIsland)
   const setKabupaten = useQuizStore((state) => state.setKabupaten)
   const setTargetKabupaten = useQuizStore((state) => state.setTargetKabupaten)
   const targetKabupaten = useQuizStore((state) => state.targetKabupaten) 
@@ -21,6 +22,8 @@ export default function QuizMap() {
   const [tooltipContent, setTooltipContent] = useState<string | null>(null);
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
   const [clickedLabel, setClickedLabel] = useState<{ name: string; x: number; y: number } | null>(null);
+
+  setIsland(island!.toString());
 
   const handleMouseMove = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
     setMousePos({ x: e.clientX, y: e.clientY });
