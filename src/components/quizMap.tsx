@@ -16,8 +16,15 @@ export default function QuizMap() {
   const incrementScore = useQuizStore((state) => state.incrementScore)
   const incrementTotal = useQuizStore((state) => state.incrementTotal)
 
-  const [selectedTarget, setSelectedTarget] = useState<String>('')
-  const [correctAnswer, setCorrectAnswer] = useState<Boolean>(false)
+  const [selectedTarget, setSelectedTarget] = useState<string>('')
+  const [correctAnswer, setCorrectAnswer] = useState<boolean>(false)
+  const [tooltipContent, setTooltipContent] = useState<string | null>(null);
+  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
+  const [clickedLabel, setClickedLabel] = useState<{ name: string; x: number; y: number } | null>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
 
   useEffect(() => {
     if (!island) return
@@ -27,6 +34,7 @@ export default function QuizMap() {
       .then((res) => res.json())
       .then((data) => {
         const features = data.objects[Object.keys(data.objects)[0]].geometries
+        // eslint-disable-next-line
         const kabupatenNames = features.map((f: any) => f.properties.NAME_2)
         setKabupaten(kabupatenNames)
 
@@ -37,6 +45,7 @@ export default function QuizMap() {
 
   }, [island, setKabupaten, setTargetKabupaten])
 
+  // eslint-disable-next-line
   const handleClick = (geo: any) => {
     const clickedName = geo.properties.NAME_2
     setSelectedTarget(clickedName);
@@ -73,7 +82,7 @@ export default function QuizMap() {
   return (
     <div className="flex flex-col items-center mt-6 h-screen">
       <p className="text-lg mb-2">Click on: <strong>{targetKabupaten}</strong></p>
-      <p className="text-lg mb-2">Clicked on: <strong>{selectedTarget} which is {correctAnswer ? 'Correct': 'Wrong'}</strong></p> 
+      <p className="text-lg mb-2">Clicked on: <strong>{selectedTarget} which is {correctAnswer ? 'Correct': 'Wrong'}</strong></p>
       <QuizControls />  
         <ComposableMap 
             className='height-400'
@@ -89,23 +98,42 @@ export default function QuizMap() {
                     <Geography
                         key={geo.rsmKey}
                         geography={geo}
-                        onClick={() => handleClick(geo)}
-                        style={{ 
-                        default: {
-                            fill: "#E0E0E0",
-                            stroke: "#607D8B",
-                            strokeWidth: 0.75,
-                        },
-                        hover: {
-                            fill: "#FF5722",
-                            stroke: "#607D8B",
-                            strokeWidth: 0.75,
-                        },
-                        pressed: {
-                            fill: "#FF5722",
-                            stroke: "#607D8B",
-                            strokeWidth: 0.75,
-                        },
+                        onClick={(e) => {
+                            handleClick(geo);
+                            const kabupaten = geo.properties.NAME_2;
+                            const x = e.clientX;
+                            const y = e.clientY;
+                            setClickedLabel({ name: kabupaten, x, y });
+
+                            // Hide after 2 seconds
+                            setTimeout(() => setClickedLabel(null), 2000);
+                        }}
+                        onMouseEnter={() => {
+                            // const kabupaten = geo.properties.NAME_2;
+                            // setTooltipContent(kabupaten);
+                            setTooltipContent('Click on: ' + targetKabupaten);
+                        }}
+                        onMouseLeave={() => {
+                            setTooltipContent(null);
+                        }}
+                        onMouseMove={handleMouseMove}
+                        style={{  
+                            default: {
+                                fill: '#ccc',
+                                stroke: '#333',
+                                strokeWidth: 0.5,
+                                outline: 'none',
+                            },
+                            hover: {
+                                fill: '#4f46e5',
+                                stroke: '#000',
+                                strokeWidth: 1,
+                                outline: 'none',
+                            },
+                            pressed: {
+                                fill: '#1d4ed8', // optional: a color for "pressed" state
+                                outline: 'none',
+                            },
                         }}
                     />
                     ))
@@ -113,6 +141,34 @@ export default function QuizMap() {
             </Geographies>
         </ZoomableGroup>
       </ComposableMap>
+
+      {/* Tooltip */}
+      {tooltipContent && mousePos && (
+        <div
+          className="absolute bg-white text-black text-sm px-2 py-1 rounded shadow"
+          style={{
+            left: mousePos.x + 10,
+            top: mousePos.y + 40,
+            pointerEvents: 'none',
+            zIndex: 10,
+          }}
+        >
+          {tooltipContent}
+        </div>
+      )}
+      {clickedLabel && (
+        <div
+            className="absolute bg-black text-white text-sm px-2 py-1 rounded shadow"
+            style={{
+            left: clickedLabel.x + 10,
+            top: clickedLabel.y - 10,
+            pointerEvents: 'none',
+            zIndex: 20,
+            }}
+        >
+            {clickedLabel.name}
+        </div>
+       )}
     </div>
   )
 }
