@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 export function saveProgress(key: string, value: any) {
   localStorage.setItem(key, JSON.stringify(value));
 }
