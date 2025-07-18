@@ -34,3 +34,50 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+# Indonesian Map Quiz 🗺️🇮🇩
+
+A geography quiz web app focused on identifying provinces of Indonesia. Built with React, Tailwind CSS, and react-simple-maps, this project offers a clean and interactive way to learn and test knowledge of Indonesia’s regional divisions.
+
+## 🌟 Features
+
+- 🗺️ Interactive SVG map of Indonesia
+- 🏝️ Island-based filtering (e.g., Java, Sumatra, Kalimantan)
+- 🧠 Quiz mode: click on the correct province when prompted
+- ✅ Tracks progress and score
+- 🌗 Light/Dark mode toggle (using localStorage)
+- 💾 State persistence with localStorage
+- ⚛️ Built using React with Zustand for state management
+- 📱 Fully responsive and accessible
+
+## 🚀 Live Demo
+
+Try it out here: [https://learn.iangregoire.space](https://learn.iangregoire.space)
+
+## 🛠️ Tech Stack
+
+- **React** – UI framework
+- **react-simple-maps** – for rendering the map
+- **Tailwind CSS** – styling
+- **Zustand** – global state management
+- **localStorage** – save progress and preferences
+- **GeoJSON** – for Indonesia’s province borders
+
+## 📁 Project Structure
+
+## 🧑‍💻 Getting Started
+
+### 1. Clone the repo
+
+```bash
+git clone https://github.com/your-username/indo-map-quiz.git
+cd indo-map-quiz
+
+npm install
+
+npm run dev
+
+Then go to http://localhost:3000 in your browser.
+```
+
+
