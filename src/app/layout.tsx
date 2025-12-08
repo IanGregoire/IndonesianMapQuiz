@@ -27,7 +27,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <h1 className="text-2xl font-bold mb-6"><a href={'/'}>🗺️ Indonesian Province Quiz</a></h1>
+        <div className="flex justify-between mx-10">
+          <h1 className="text-2xl font-bold mb-6"><a href={'/'}>🗺️ Indonesian Province Quiz</a></h1>
+          <h1 className="text-2xl font-bold mb-6"><a href={'/results'}>Results</a></h1>
+        </div>
         {children}
       </body>
     </html>
