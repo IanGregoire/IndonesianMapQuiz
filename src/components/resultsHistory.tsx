@@ -8,7 +8,9 @@ export default function ResultsHistory() {
   const [results, setResults] = useState<QuizResult[]>([]);
 
   useEffect(() => {
-    setResults(loadQuizResults());
+    if(typeof window !== 'undefined') {
+      setResults(loadQuizResults());
+    }
   }, []);
 
   return (

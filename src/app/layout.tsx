@@ -29,7 +29,7 @@ export default function RootLayout({
       >
         <div className="flex justify-between mx-10">
           <h1 className="text-2xl font-bold mb-6"><a href={'/'}>🗺️ Indonesian Province Quiz</a></h1>
-          <h1 className="text-2xl font-bold mb-6"><a href={'/results'}>Results</a></h1>
+          <h1 className="text-2xl font-bold mb-6"><a href={'/history'}>History</a></h1>
         </div>
         {children}
       </body>

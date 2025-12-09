@@ -17,7 +17,9 @@ export default function ResultSummary() {
     total,
   };
 
-  saveQuizResult(result);
+  if(typeof window !== 'undefined') {
+    saveQuizResult(result);
+  }
 
   const handlePlayAgain = () => {
     reset()
