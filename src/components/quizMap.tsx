@@ -22,8 +22,14 @@ export default function QuizMap() {
   const [tooltipContent, setTooltipContent] = useState<string | null>(null);
   const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(null);
   const [clickedLabel, setClickedLabel] = useState<{ name: string; x: number; y: number } | null>(null);
+  const [isLearning, setIsLearning] = useState<boolean>(false)
+  const [isCorrect, setIsCorrect] = useState<boolean>(false)
 
   setIsland(island!.toString());
+
+  const handleLearning = () => {
+    setIsLearning(!isLearning);
+  }
 
   const handleMouseMove = (e: React.MouseEvent<SVGPathElement, MouseEvent>) => {
     setMousePos({ x: e.clientX, y: e.clientY });
@@ -84,6 +90,7 @@ export default function QuizMap() {
 
   return (
     <div className="flex flex-col items-center mt-6 h-screen">
+      <p><button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-60 mb-2" onClick={handleLearning}>Learning Mode</button> { isLearning ? 'On' : 'Off' }</p>
       <p className="text-lg mb-2">Click on: <strong>{targetKabupaten}</strong></p>
       <p className="text-lg mb-2">Clicked on: <strong>{selectedTarget} which is {correctAnswer ? 'Correct': 'Wrong'}</strong></p>
       <QuizControls />  
@@ -112,9 +119,17 @@ export default function QuizMap() {
                             setTimeout(() => setClickedLabel(null), 2000);
                         }}
                         onMouseEnter={() => {
-                            // const kabupaten = geo.properties.NAME_2;
-                            // setTooltipContent(kabupaten);
-                            setTooltipContent('Click on: ' + targetKabupaten);
+                            if(isLearning) {
+                              const kabupaten = geo.properties.NAME_2;
+                              setTooltipContent('Hovering over: ' + kabupaten);
+                              if(kabupaten == targetKabupaten) {
+                                setIsCorrect(true);
+                              } else {
+                                setIsCorrect(false);
+                              }
+                            } else {
+                              setTooltipContent('Click on: ' + targetKabupaten);
+                            }
                         }}
                         onMouseLeave={() => {
                             setTooltipContent(null);
@@ -128,7 +143,7 @@ export default function QuizMap() {
                                 outline: 'none',
                             },
                             hover: {
-                                fill: '#4f46e5',
+                                fill: isCorrect ? 'green' : '#4f46e5',
                                 stroke: '#000',
                                 strokeWidth: 1,
                                 outline: 'none',
